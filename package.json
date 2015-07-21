@@ -1,0 +1,25 @@
+{
+  "name": "geojson-clip-polygon",
+  "version": "1.0.0",
+  "description": "A small wrapper around turf-intersect to safely clip one geojson polygon to another",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anandthakker/geojson-clip-polygon.git"
+  },
+  "keywords": [
+    "geojson",
+    "polygon",
+    "clip",
+    "intersection"
+  ],
+  "author": "Anand Thakker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/anandthakker/geojson-clip-polygon/issues"
+  },
+  "homepage": "https://github.com/anandthakker/geojson-clip-polygon#readme"
+}
