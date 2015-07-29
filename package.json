@@ -1,6 +1,6 @@
 {
   "name": "geojson-clip-polygon",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A small wrapper around turf-intersect to safely clip one geojson polygon to another",
   "main": "index.js",
   "scripts": {
