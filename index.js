@@ -1,4 +1,3 @@
-var kinks = require('turf-kinks')
 var intersect = require('turf-intersect')
 var buffer = require('turf-buffer')
 var area = require('turf-area')
@@ -18,31 +17,36 @@ var inside = require('turf-inside')
  */
 module.exports = function clip (boundary, toClip, options) {
   options = options || {}
-  if (typeof options.threshold === 'undefined') { options.threshold = 0 }
+  var threshold = options.threshold
+  if (typeof threshold === 'undefined') { threshold = 0 }
 
-  toClip = bufferDegenerate(toClip)
-  if (area(envelope(toClip)) < options.threshold) {
+  // filter out zero-area rings that can be caused by tile slicing
+  var rings = toClip.geometry.coordinates.slice(1)
+  rings = rings.filter(function (ring) {
+    return area(envelope({
+      type: 'LineString',
+      coordinates: ring
+    })) > threshold
+  })
+  toClip.geometry.coordinates = [toClip.geometry.coordinates[0]].concat(rings)
+
+  // drop polygons with bboxes below the given area threshold
+  if (area(envelope(toClip)) <= threshold) {
     return null
   }
 
   if (isInside(toClip, boundary)) {
     return toClip
   } else {
+    toClip = bufferDegenerate(toClip)
     return clipPolygon(boundary, toClip)
   }
 }
 
 function bufferDegenerate (feature) {
-  // clean up any self-intersecting polygons with a naive polygon
-  // offset (aka 'buffer') algorithm.
-  var k = kinks(feature)
-  if (k.intersections.features.length > 0) {
-    var buffed = buffer(feature, 0)
-    buffed.properties = feature.properties
-    return buffed
-  } else {
-    return feature
-  }
+  var buffed = buffer(feature, 0)
+  buffed.properties = feature.properties
+  return buffed
 }
 
 function isInside (feature, poly) {
