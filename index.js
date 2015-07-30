@@ -1,6 +1,7 @@
 var intersect = require('turf-intersect')
 var buffer = require('turf-buffer')
 var area = require('turf-area')
+var extent = require('turf-extent')
 var envelope = require('turf-envelope')
 var explode = require('turf-explode')
 var inside = require('turf-inside')
@@ -37,16 +38,27 @@ module.exports = function clip (boundary, toClip, options) {
 
   if (isInside(toClip, boundary)) {
     return toClip
-  } else {
-    toClip = bufferDegenerate(toClip)
-    return clipPolygon(boundary, toClip)
   }
+
+  if (isOutside(toClip, boundary)) {
+    return null
+  }
+
+  toClip = bufferDegenerate(toClip)
+  return clipPolygon(boundary, toClip)
 }
 
 function bufferDegenerate (feature) {
   var buffed = buffer(feature, 0)
   buffed.properties = feature.properties
   return buffed
+}
+
+// no false positives, some false negatives
+function isOutside (feature, poly) {
+  var a = feature.bbox = feature.bbox || extent(feature)
+  var b = poly.bbox = poly.bbox || extent(poly)
+  return a[2] < b[0] || a[0] > b[2] || a[3] < b[1] || a[1] > b[3]
 }
 
 function isInside (feature, poly) {

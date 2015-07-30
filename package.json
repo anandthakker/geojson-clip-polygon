@@ -32,6 +32,7 @@
     "turf-buffer": "^1.0.4",
     "turf-envelope": "^1.0.2",
     "turf-explode": "^1.0.1",
+    "turf-extent": "^1.0.4",
     "turf-inside": "^1.1.4",
     "turf-intersect": "^1.4.2"
   }
