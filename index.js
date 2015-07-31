@@ -10,9 +10,9 @@ var inside = require('turf-inside')
  * Clip a polygon feature to the given boundary polygon, copying properties
  * from the original feature and safely dealing with self-intersections.
  *
- * @param Feature<Polygon> boundary
- * @param Feature<Polygon> toClip
- * @param number options.threshold - area in m^2 below which to drop result polygon
+ * @param {Feature<Polygon>} boundary
+ * @param {Feature<Polygon>} toClip
+ * @param {number} options.threshold - area in m^2 below which to drop result polygon
  *
  * @returns Feature<Polygon> - the clipped feature, or null if no intersection
  */
@@ -38,6 +38,14 @@ module.exports = function clip (boundary, toClip, options) {
 
   if (isInside(toClip, boundary)) {
     return toClip
+  }
+
+  if (isInside(boundary, toClip)) {
+    return {
+      type: 'Feature',
+      properties: toClip.properties,
+      geometry: boundary.geometry
+    }
   }
 
   if (isOutside(toClip, boundary)) {
